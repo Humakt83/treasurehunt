@@ -42,3 +42,22 @@
     transform: rotate(0deg);
   }
 }
+
+.level {
+  background: blue;
+  color: white;
+  font-weight: bolder;
+  display: grid;
+  grid-gap: 0.5vw 0.5vh;
+  grid-template-columns: repeat(10, 8.5vw [col-start]);
+  grid-template-rows: repeat(10, 8.5vh [row-start]);
+  text-align: center;
+}
+
+.tile {
+  width: 100%;
+  border-radius: 15px;
+  background: green;
+  vertical-align: middle;
+  line-height: 8.5vh;
+}
