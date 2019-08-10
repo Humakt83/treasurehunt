@@ -1,8 +1,14 @@
 import React from 'react';
+import Players from './Players';
 
 class Game extends React.Component {
   render() {
-    return <span>Game started</span>
+    return (
+      <section>
+        <span>Game started</span>
+        <Players players={this.props.players} />
+      </section>
+    )
   }
 }
 

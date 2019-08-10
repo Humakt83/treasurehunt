@@ -29,7 +29,7 @@ class App extends React.Component {
 
   render() {
     if (this.state.gameStarted) {
-      return <Game />
+      return <Game players={this.state.players}/>
     }
     let playerNames = this.state.players.map((item, index) => <input key={index} value={item} onChange={(value) => this.changeName(value, index)}></input>);    
     return (
