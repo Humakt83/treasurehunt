@@ -6,8 +6,10 @@ class Game extends React.Component {
   render() {
     return (
       <section>
-        <span>Game started</span>
-        <Players players={this.props.players} />
+        <div class="info">
+          <span>Game started</span>
+          <Players players={this.props.players} />
+        </div>
         <Board />
       </section>
     )
