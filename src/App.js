@@ -2,6 +2,8 @@ import React from 'react';
 import Game from './Game';
 import './App.css';
 
+const maximumPlayers = 8;
+
 class App extends React.Component {
   constructor(props) {
     super(props);
@@ -17,14 +19,19 @@ class App extends React.Component {
 
   addPlayer() {
     const players = this.state.players;
-    players.push('');
+    players.push(`Player ${players.length + 1}`);
     this.setState({players});
   }
 
   changeName(event, index) {
     const players = this.state.players;    
-    players[index] = event.target.value;
+    players[index] = event.target.value;    
     this.setState({players});
+  }
+
+  isInvalidToStart() {
+    const players = this.state.players;
+    return players.length < 2 || players.some(((player) => player.trim().length === 0));
   }
 
   render() {
@@ -43,8 +50,8 @@ class App extends React.Component {
           <span role="img" className="App-logo-money" aria-label="money">💶</span>
         </header>
         <div>
-          <button onClick={this.addPlayer}>Add player</button>
-          <button onClick={this.startGame} disabled={this.state.players.length <2}>Start game</button>
+          <button onClick={this.addPlayer} disabled={this.state.players.length >= maximumPlayers}>Add player</button>
+          <button onClick={this.startGame} disabled={this.isInvalidToStart()}>Start game</button>
           {playerNames}
         </div>
       </div>
