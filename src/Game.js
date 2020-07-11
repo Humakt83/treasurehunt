@@ -6,11 +6,11 @@ class Game extends React.Component {
   render() {
     return (
       <section>
-        <div class="info">
+        <div className="info">
           <span>Game started</span>
           <Players players={this.props.players} />
         </div>
-        <Board />
+        <Board players={this.props.players}/>
       </section>
     )
   }
