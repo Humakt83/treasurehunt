@@ -1,4 +1,5 @@
 import React from 'react';
+import './Board.css';
 
 const emojiMap = {
   'player': '😀',
@@ -14,7 +15,11 @@ export default class Board extends React.Component {
     const board = this.props.board;
     const table = [];
     board.forEach((slot, index) => {
-      table.push(<div className="tile" key={index}>{emojiMap[slot.type]}</div>);
+      table.push(
+        <div className='tile' key={index}>
+          {slot.paths.map((path) => <div className={'path ' + path}></div>)}
+          {emojiMap[slot.type]}
+        </div>);
     });
     return table;
   }

@@ -1,0 +1,49 @@
+.tile {
+  width: 100%;
+  background: green;
+  vertical-align: middle;
+  line-height: 8.5vh;
+  font-size: 40px;
+  position: relative;
+  border-radius: 90px;
+  box-shadow: inset 0 0 0 5px sandybrown;
+}
+
+.path {
+  background: burlywood;
+  position: absolute;
+}
+
+.north,
+.south {
+  width: 1rem;
+  left: 30%;
+  height: 20px;
+  border-right: 5px ridge brown;
+  border-left: 5px ridge brown;
+}
+
+.south {  
+  bottom: -10px;
+}
+
+.north {
+  top: -10px;
+}
+
+.west,
+.east {
+  width: 20px;
+  top: 30%;
+  height: 1rem;
+  border-top: 5px ridge brown;
+  border-bottom: 5px ridge brown;
+}
+
+.west {  
+  left: -10px;
+}
+
+.east {
+  right: -10px;
+}

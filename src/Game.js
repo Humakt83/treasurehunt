@@ -34,23 +34,40 @@ class Game extends React.Component {
     const board = [];
     for (let y = 0; y < rows; y++) {      
       for (let x = 0; x < columns; x++) {
-        board.push({type: 'tile'});
+        board.push({type: 'tile', paths: ['north', 'west', 'east', 'south']});
       }
     }
     players.forEach((player) => {
       const x = this.findFreePlace(board, () => Math.floor(Math.random() * columns));
-      board[x] = {type: 'player', obj: player};
+      board[x].type = 'player';
+      board[x].obj = player;
     });
     for (let i = 0; i < thieves; i++) {
       const x = this.findFreePlace(board, () => Math.max(20, Math.floor(Math.random() * columns * rows)));
-      board[x] = {type: 'thief'};
+      board[x].type = 'thief';
     }
     for (let i = 0; i < money; i++) {
       const x = this.findFreePlace(board, () => Math.max(10, Math.floor(Math.random() * columns * rows)));
-      board[x] = {type: 'money'};
+      board[x].type = 'money';
     }
-    const x = this.findFreePlace(board, () => Math.max(30, Math.floor(Math.random() * columns * rows)));
-    board[x] = {type: 'treasure'};
+    const x = this.findFreePlace(board, () => Math.max(20, Math.floor(Math.random() * columns * rows)));
+    board[x].type = 'treasure';
+    board.forEach((tile, index) => {
+      const paths = [];
+      if (index > 0 && board[index -1].paths.includes('east')) {
+        paths.push('west');
+      }
+      if (index > columns && board[index - 10].paths.includes('south')) {
+        paths.push('north');
+      }
+      if (index < ((columns * rows) - columns) && Math.random() > 0.5) {
+        paths.push('south');
+      }
+      if (!Number.isInteger((index + 1) / columns) && Math.random() > 0.5) {
+        paths.push('east');
+      }
+      tile.paths = paths;
+    });
     return board;
   }
 
