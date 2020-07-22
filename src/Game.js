@@ -9,13 +9,14 @@ const thieves = 4;
 
 class Game extends React.Component {
 
-  board = [];
-  activePlayer = 0;
-
   constructor(props) {
     super(props);
-    this.board = this.constructBoard();
+    this.state = {board: this.constructBoard(), activePlayer: 0, tilesToMove: []};
   }  
+
+  componentDidMount() {
+    this.setState({tilesToMove: this.moveableTiles()});
+  }
 
   isEmpty(board, location) {
     return board[location].type === 'tile';
@@ -35,7 +36,7 @@ class Game extends React.Component {
     const board = [];
     for (let y = 0; y < rows; y++) {      
       for (let x = 0; x < columns; x++) {
-        board.push({type: 'tile', paths: ['north', 'west', 'east', 'south']});
+        board.push({type: 'tile', paths: [], id: board.length + 1});
       }
     }
     players.forEach((player) => {
@@ -72,14 +73,41 @@ class Game extends React.Component {
     return board;
   }
 
+  changeTurn() {
+    this.setState({activePlayer: this.state.activePlayer + 1});
+    if (this.state.activePlayer + 1 > this.props.players.length) {
+      this.setState({activePlayer: 0});
+    }
+    this.setState({tilesToMove: this.moveableTiles()});
+  }
+
+  moveableTiles() {
+    const activePlayer = this.props.players[this.state.activePlayer];
+    const slot = this.state.board.find((slot) => slot.obj && slot.obj.name === activePlayer.name);
+    return slot.paths.map(path => {
+      switch(path) {
+        case 'north':
+          return slot.id - columns;
+        case 'east':
+          return slot.id + 1;
+        case 'south':
+          return slot.id + columns;
+        case 'west':
+          return slot.id - 1;
+        default: 
+          return null;
+      }
+    });
+  }
+
   render() {    
     return (
       <section>
         <div className="info">
           <span>Game started</span>
-          <Players players={this.props.players} active={this.activePlayer} />
+          <Players players={this.props.players} active={this.state.activePlayer} />
         </div>
-        <Board board={this.board}/>
+        <Board board={this.state.board} tilesToMove={this.state.tilesToMove}/>
       </section>
     )
   }

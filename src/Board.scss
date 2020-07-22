@@ -23,6 +23,9 @@
   border-radius: 90px;
   text-align: center;
   box-shadow: inset 0 0 0 5px sandybrown;
+  &--movable {
+    box-shadow: inset 0 0 5px 10px gold;
+  }
 }
 
 .path {
