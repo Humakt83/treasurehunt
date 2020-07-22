@@ -21,9 +21,11 @@ export default class Board extends React.Component {
         const className =  'player player--' + slot.obj.color;
         slotType = <span className={className} aria-label={slot.type} role="img">{slotType}</span>;
       }
-      const tileClassName = moveableTiles.includes(slot.id) ? 'tile tile--movable' : 'tile';
+      const moveable = moveableTiles.includes(slot.id)
+      const clickFn = moveable ? this.props.onMove : (event) => event.stopPropagation();
+      const tileClassName = moveable ? 'tile tile--movable' : 'tile';
       table.push(
-        <div className={tileClassName} key={index}>
+        <div className={tileClassName} key={index} onClick={(e) => clickFn(slot.id, e)}>
           {slot.paths.map((path) => {
             const key = index + '-' + path;
             return <div key={key} className={'path ' + path}></div>;

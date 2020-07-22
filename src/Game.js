@@ -14,10 +14,11 @@ class Game extends React.Component {
   constructor(props) {
     super(props);
     this.state = {board: this.constructBoard(), activePlayer: 0, tilesToMove: []};
+    this.move = this.move.bind(this);
   }  
 
   componentDidMount() {
-    this.setState({tilesToMove: this.moveableTiles()});
+    this.setState({tilesToMove: this.moveableTiles(this.props.players[this.state.activePlayer], this.state.board)});
   }
 
   isEmpty(board, location) {
@@ -75,17 +76,18 @@ class Game extends React.Component {
     return board;
   }
 
-  changeTurn() {
-    this.setState({activePlayer: this.state.activePlayer + 1});
-    if (this.state.activePlayer + 1 > this.props.players.length) {
-      this.setState({activePlayer: 0});
+  changeTurn(board) {
+    let activePlayer = this.state.activePlayer + 1;
+    if (activePlayer + 1 > this.props.players.length) {
+      activePlayer = 0;
     }
-    this.setState({tilesToMove: this.moveableTiles()});
+    const player = this.props.players[activePlayer];
+    const tilesToMove = this.moveableTiles(player, board);
+    this.setState({activePlayer, board, tilesToMove});
   }
 
-  moveableTiles() {
-    const activePlayer = this.props.players[this.state.activePlayer];
-    const slot = this.state.board.find((slot) => slot.obj && slot.obj.name === activePlayer.name);
+  moveableTiles(activePlayer, board) {    
+    const slot = board.find((slot) => slot.obj && slot.obj.name === activePlayer.name);
     return slot.paths.map(path => {
       switch(path) {
         case 'north':
@@ -102,6 +104,18 @@ class Game extends React.Component {
     });
   }
 
+  move(tileId) {
+    const board = this.state.board;
+    const tile = board.find((tile) => tile.id === tileId);
+    const activePlayer = this.props.players[this.state.activePlayer];
+    const slot = board.find((slot) => slot.obj && slot.obj.name === activePlayer.name);
+    slot.type = 'tile';
+    slot.obj = null;
+    tile.obj = activePlayer;
+    tile.type = 'player';
+    this.changeTurn(board);
+  }
+
   render() {    
     return (
       <section>
@@ -111,7 +125,7 @@ class Game extends React.Component {
             <Players players={this.props.players} active={this.state.activePlayer} />
           </div>
           <div className="board-area">
-            <Board board={this.state.board} tilesToMove={this.state.tilesToMove}/>
+            <Board board={this.state.board} tilesToMove={this.state.tilesToMove} onMove={this.move}/>
           </div>
           <div className="action-area">
             <ActionPanel/>
