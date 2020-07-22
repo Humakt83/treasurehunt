@@ -1,3 +1,8 @@
+@keyframes modalAppear {
+  from {top: -20vh}
+  to {top: 10vh}
+}
+
 .modal-container {
   position: fixed;
   top: 0;
@@ -20,6 +25,7 @@
     font-weight: bold;
     background-color: white;
     box-shadow: 0 0 5px 8px gold;
+    animation: modalAppear ease-in-out 0.5s;
     button {
       font-weight: bold;
       font-size: 25px;

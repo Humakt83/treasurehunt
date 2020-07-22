@@ -120,7 +120,9 @@ class Game extends React.Component {
     });
   }
 
-  move(tileId) {
+  move(event, tileId) {
+    event.preventDefault();    
+    event.stopPropagation();    
     const board = this.state.board;
     const to = board.find((tile) => tile.id === tileId);
     const activePlayer = this.props.players[this.state.activePlayer];

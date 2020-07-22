@@ -23,4 +23,9 @@ $player-colors: (blue, red, yellow, white, black, tan, cyan, lightgray);
       box-shadow: 0 0 5px 8px gold;
     }
   }
+  .money {
+    margin-left: 5px;
+    vertical-align: top;
+    font-size: small;
+  }
 }
