@@ -1,13 +1,14 @@
 import React from 'react';
 import Game from './Game';
-import './App.css';
+import './App.scss';
 
 const maximumPlayers = 8;
+const playerColors = ['blue', 'red', 'yellow', 'white', 'black', 'tan', 'cyan', 'lightgray']
 
 class App extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { players: ['Player 1', 'Player 2']};
+    this.state = { players: []};
     this.startGame = this.startGame.bind(this);
     this.addPlayer = this.addPlayer.bind(this);
     this.changeName = this.changeName.bind(this);
@@ -17,28 +18,33 @@ class App extends React.Component {
     this.setState({players: this.state.players, gameStarted: true});
   }
 
+  componentDidMount() {
+    this.addPlayer();
+    this.addPlayer();
+  }
+
   addPlayer() {
     const players = this.state.players;
-    players.push(`Player ${players.length + 1}`);
+    players.push({name: `Player ${players.length + 1}`, money: 1000, color: playerColors[players.length]});
     this.setState({players});
   }
 
   changeName(event, index) {
     const players = this.state.players;    
-    players[index] = event.target.value;    
+    players[index].name = event.target.value;
     this.setState({players});
   }
 
   isInvalidToStart() {
     const players = this.state.players;
-    return players.length < 2 || players.some(((player) => player.trim().length === 0));
+    return players.length < 2 || players.some(((player) => player.name.trim().length === 0));
   }
 
   render() {
     if (this.state.gameStarted) {
       return <Game players={this.state.players}/>
     }
-    let playerNames = this.state.players.map((item, index) => <input key={index} value={item} onChange={(value) => this.changeName(value, index)}></input>);    
+    let playerNames = this.state.players.map((item, index) => <input key={index} value={item.name} onChange={(value) => this.changeName(value, index)}></input>);    
     return (
 
       <div className="App">

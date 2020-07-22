@@ -1,8 +1,15 @@
 import React from 'react';
+import './Players.scss';
 
 export default class Players extends React.Component {
   render() {
-    const players = this.props.players.map((player, index) => <div className="player" key={index}><span>{player}</span></div>)
+    const players = this.props.players.map((player, index) => {
+      const className = 'player player--' + player.color;
+      return <div className={className} key={index}>
+        <span>{player.name}</span>
+      </div>
+    });
+    
     return (
       <div className="players">
         {players}

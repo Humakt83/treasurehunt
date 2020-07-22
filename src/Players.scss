@@ -1,0 +1,23 @@
+
+$player-colors: (blue, red, yellow, white, black, tan, cyan, lightgray);
+
+.players {
+  display: inline-flex;
+  width: 80vw;
+  flex-flow: row;
+  justify-content: space-evenly;
+
+  .player {  
+    font-size: larger;;
+    font-weight: bolder;
+    text-align: center;
+    border-radius: 15px;
+    padding: 2px 5px;
+  
+    @each $color in $player-colors {
+      &--#{$color} {
+        border: 5px solid $color;
+      }
+    }
+  }
+}

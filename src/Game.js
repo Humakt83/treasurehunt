@@ -60,10 +60,10 @@ class Game extends React.Component {
       if (index > columns && board[index - 10].paths.includes('south')) {
         paths.push('north');
       }
-      if (index < ((columns * rows) - columns) && Math.random() > 0.5) {
+      if (index < ((columns * rows) - columns) && Math.random() > 0.3) {
         paths.push('south');
       }
-      if (!Number.isInteger((index + 1) / columns) && Math.random() > 0.5) {
+      if (!Number.isInteger((index + 1) / columns) && Math.random() > 0.3) {
         paths.push('east');
       }
       tile.paths = paths;
