@@ -3,11 +3,27 @@ import Players from './Players';
 import Board from './Board';
 import ActionPanel from './ActionPanel';
 import './Game.scss';
+import EncounterModal from './EncounterModal';
 
 const rows = 10;
 const columns = 10;
 const money = 20;
 const thieves = 4;
+
+const encounterMap = {
+  thief: {
+    message: `You have been robbed!`,
+    action: (player) => player.money = 0,
+  },
+  money: {
+    message: `You found 500 money!`,
+    action: (player) => player.money += 500, 
+  },
+  treasure: {
+    message: 'You found the treasure!',
+    action: (player) => player.treasure = true,
+  }
+};
 
 class Game extends React.Component {
 
@@ -106,17 +122,32 @@ class Game extends React.Component {
 
   move(tileId) {
     const board = this.state.board;
-    const tile = board.find((tile) => tile.id === tileId);
+    const to = board.find((tile) => tile.id === tileId);
     const activePlayer = this.props.players[this.state.activePlayer];
-    const slot = board.find((slot) => slot.obj && slot.obj.name === activePlayer.name);
-    slot.type = 'tile';
-    slot.obj = null;
-    tile.obj = activePlayer;
-    tile.type = 'player';
-    this.changeTurn(board);
+    const from = board.find((slot) => slot.obj && slot.obj.name === activePlayer.name);
+    from.type = 'tile';
+    from.obj = null;
+    const originalType = to.type;
+    to.obj = activePlayer;
+    to.type = 'player';
+    if (encounterMap[originalType]) {
+      const encounter = encounterMap[originalType];
+      encounter.action(activePlayer);
+      encounter.continue = () => {        
+        this.setState({encounter: null});
+        this.changeTurn(board)
+      };
+      this.setState({encounter});
+    } else {
+      this.changeTurn(board);
+    }
   }
 
-  render() {    
+  render() {
+    let encounter = '';
+    if (this.state.encounter) {
+      encounter = <EncounterModal encounter={this.state.encounter} />
+    }
     return (
       <section>
         <div className="game">
@@ -131,6 +162,7 @@ class Game extends React.Component {
             <ActionPanel/>
           </div>
         </div>
+        {encounter}
       </section>
     )
   }
