@@ -1,0 +1,26 @@
+
+.game {
+  display: grid;
+  grid-template-rows: auto;
+  grid-template-columns: 90vw 10vw;
+  grid-template-areas:
+    "info info"
+    "board actions";
+
+  .info-area {
+    display: block;
+    width: 100vw;
+    background: linear-gradient(to right, #61dafb 10%, #aa99ba 80%, #61dafb);
+    padding: 1rem;
+    border-bottom: 2px solid black;
+    grid-area: info;
+  }
+
+  .board-area {
+    grid-area: board;
+  }
+
+  .action-area {
+    grid-area: actions;
+  }
+}

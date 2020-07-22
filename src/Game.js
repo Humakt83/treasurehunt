@@ -1,6 +1,8 @@
 import React from 'react';
 import Players from './Players';
 import Board from './Board';
+import ActionPanel from './ActionPanel';
+import './Game.scss';
 
 const rows = 10;
 const columns = 10;
@@ -103,11 +105,18 @@ class Game extends React.Component {
   render() {    
     return (
       <section>
-        <div className="info">
-          <span>Game started</span>
-          <Players players={this.props.players} active={this.state.activePlayer} />
+        <div className="game">
+          <div className="info-area">
+            <span>Game started</span>
+            <Players players={this.props.players} active={this.state.activePlayer} />
+          </div>
+          <div className="board-area">
+            <Board board={this.state.board} tilesToMove={this.state.tilesToMove}/>
+          </div>
+          <div className="action-area">
+            <ActionPanel/>
+          </div>
         </div>
-        <Board board={this.state.board} tilesToMove={this.state.tilesToMove}/>
       </section>
     )
   }
