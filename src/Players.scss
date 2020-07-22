@@ -19,5 +19,8 @@ $player-colors: (blue, red, yellow, white, black, tan, cyan, lightgray);
         border: 5px solid $color;
       }
     }
+    &--active {
+      box-shadow: 0 0 5px 8px gold;
+    }
   }
 }

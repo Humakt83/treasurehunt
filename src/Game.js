@@ -10,6 +10,7 @@ const thieves = 4;
 class Game extends React.Component {
 
   board = [];
+  activePlayer = 0;
 
   constructor(props) {
     super(props);
@@ -76,7 +77,7 @@ class Game extends React.Component {
       <section>
         <div className="info">
           <span>Game started</span>
-          <Players players={this.props.players} />
+          <Players players={this.props.players} active={this.activePlayer} />
         </div>
         <Board board={this.board}/>
       </section>
