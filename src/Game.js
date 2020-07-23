@@ -32,11 +32,8 @@ class Game extends React.Component {
     this.state = {board: this.constructBoard(), activePlayer: 0, tilesToMove: []};
     this.move = this.move.bind(this);
     this.skip = this.skip.bind(this);
+    this.roll = this.roll.bind(this);
   }  
-
-  componentDidMount() {
-    this.setState({tilesToMove: this.moveableTiles(this.props.players[this.state.activePlayer], this.state.board)});
-  }
 
   isEmpty(board, location) {
     return board[location].type === 'tile';
@@ -99,26 +96,45 @@ class Game extends React.Component {
       activePlayer = 0;
     }
     const player = this.props.players[activePlayer];
-    const tilesToMove = this.moveableTiles(player, board);
-    this.setState({activePlayer, board, tilesToMove});
+    this.setState({activePlayer, board, tilesToMove: [], actionsDisabled: false});
   }
 
-  moveableTiles(activePlayer, board) {    
-    const slot = board.find((slot) => slot.obj && slot.obj.name === activePlayer.name);
-    return slot.paths.map(path => {
+  moveableTiles(activePlayer, board, rollAmount, slotPassed = null, fromDirection = null) {
+    const slot = slotPassed ? board[slotPassed - 1] : board.find((slot) => slot.obj && slot.obj.name === activePlayer.name);
+    const tiles = slot.paths
+      .filter((path) => !fromDirection 
+        || (fromDirection === 'north' && path !== 'south')
+        || (fromDirection === 'south' && path !== 'north')
+        || (fromDirection === 'west' && path !== 'east')
+        || (fromDirection === 'east' && path !== 'west'))
+      .map(path => {
       switch(path) {
         case 'north':
-          return slot.id - columns;
+          if (rollAmount > 1) {
+            return this.moveableTiles(activePlayer, board, rollAmount - 1, slot.id - columns, 'north')
+          }
+          return [slot.id - columns];
         case 'east':
-          return slot.id + 1;
+          if (rollAmount > 1) {
+            return this.moveableTiles(activePlayer, board, rollAmount - 1, slot.id + 1, 'east')
+          }
+          return [slot.id + 1];
         case 'south':
-          return slot.id + columns;
+          if (rollAmount > 1) {
+            return this.moveableTiles(activePlayer, board, rollAmount - 1, slot.id + columns, 'south')
+          }
+          return [slot.id + columns];
         case 'west':
-          return slot.id - 1;
+          if (rollAmount > 1) {
+            return this.moveableTiles(activePlayer, board, rollAmount - 1, slot.id - 1, 'west')
+          }
+          return [slot.id - 1];
         default: 
-          return null;
+          return [];
       }
-    });
+    }).reduce((previous, current) => previous.concat(current), []);
+    const uniqueTiles = new Set(tiles);
+    return [...uniqueTiles];
   }
 
   move(event, tileId) {
@@ -146,6 +162,17 @@ class Game extends React.Component {
     }
   }
 
+  roll() {
+    const rollAmount = 1 + Math.floor(Math.random() * 3);
+    const tilesToMove = this.moveableTiles(this.props.players[this.state.activePlayer], this.state.board, rollAmount);
+    if (tilesToMove.length > 1) {
+      this.setState({actionsDisabled: true, rolled: rollAmount, tilesToMove});
+    } else {
+      this.setState({rolled: rollAmount});
+      this.changeTurn(this.state.board);
+    }
+  }
+
   skip() {
     this.props.players[this.state.activePlayer].money += 100;
     this.changeTurn(this.state.board);
@@ -166,7 +193,7 @@ class Game extends React.Component {
             <Board board={this.state.board} tilesToMove={this.state.tilesToMove} onMove={this.move}/>
           </div>
           <div className="action-area">
-            <ActionPanel actions={{skip: this.skip}}/>
+            <ActionPanel disabled={this.state.actionsDisabled} actions={{skip: this.skip, roll: this.roll}}/>
           </div>
         </div>
         {encounter}

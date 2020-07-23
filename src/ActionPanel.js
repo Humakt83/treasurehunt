@@ -7,14 +7,14 @@ export default class ActionPanel extends React.Component {
     return (
       <section>
         <div className="action-panel">
-          <button>
+          <button disabled={this.props.disabled} onClick={this.props.actions.roll}>
             <span aria-label="roll" role="img">🎲</span>
           </button>
-          <button>
+          <button disabled={this.props.disabled}>
             <span aria-label="helicopter" role="img">🚁</span>
           </button>
-          <button>
-            <span aria-label="work to earn money" role="img" onClick={this.props.actions.skip}>🔨</span>
+          <button onClick={this.props.actions.skip} disabled={this.props.disabled}>
+            <span aria-label="work to earn money" role="img">🔨</span>
           </button>
         </div>
       </section>
