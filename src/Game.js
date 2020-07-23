@@ -31,6 +31,7 @@ class Game extends React.Component {
     super(props);
     this.state = {board: this.constructBoard(), activePlayer: 0, tilesToMove: []};
     this.move = this.move.bind(this);
+    this.skip = this.skip.bind(this);
   }  
 
   componentDidMount() {
@@ -145,6 +146,10 @@ class Game extends React.Component {
     }
   }
 
+  skip() {
+    this.changeTurn(this.state.board);
+  }
+
   render() {
     let encounter = '';
     if (this.state.encounter) {
@@ -154,14 +159,13 @@ class Game extends React.Component {
       <section>
         <div className="game">
           <div className="info-area">
-            <span>Game started</span>
             <Players players={this.props.players} active={this.state.activePlayer} />
           </div>
           <div className="board-area">
             <Board board={this.state.board} tilesToMove={this.state.tilesToMove} onMove={this.move}/>
           </div>
           <div className="action-area">
-            <ActionPanel/>
+            <ActionPanel actions={{skip: this.skip}}/>
           </div>
         </div>
         {encounter}

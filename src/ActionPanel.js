@@ -13,6 +13,9 @@ export default class ActionPanel extends React.Component {
           <button>
             <span aria-label="helicopter" role="img">🚁</span>
           </button>
+          <button>
+            <span aria-label="sleep" role="img" onClick={this.props.actions.skip}>😴</span>
+          </button>
         </div>
       </section>
     )
