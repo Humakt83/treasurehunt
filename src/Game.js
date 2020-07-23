@@ -147,6 +147,7 @@ class Game extends React.Component {
   }
 
   skip() {
+    this.props.players[this.state.activePlayer].money += 100;
     this.changeTurn(this.state.board);
   }
 
