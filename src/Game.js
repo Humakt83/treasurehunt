@@ -33,6 +33,7 @@ class Game extends React.Component {
     this.move = this.move.bind(this);
     this.skip = this.skip.bind(this);
     this.roll = this.roll.bind(this);
+    this.helicopter = this.helicopter.bind(this);
   }  
 
   isEmpty(board, location) {
@@ -95,7 +96,6 @@ class Game extends React.Component {
     if (activePlayer + 1 > this.props.players.length) {
       activePlayer = 0;
     }
-    const player = this.props.players[activePlayer];
     this.setState({activePlayer, board, tilesToMove: [], actionsDisabled: false});
   }
 
@@ -173,6 +173,27 @@ class Game extends React.Component {
     }
   }
 
+  helicopter() {
+    const board = this.state.board;
+    const player = this.props.players[this.state.activePlayer];
+    player.money -= 1000;
+    const from = board.find((slot) => slot.obj && slot.obj.name === player.name);
+    const tiles = new Set();
+    const secondStartDigit = from.id < 10 ? from.id : Number.parseInt(('' + from.id)[1]);
+    for (let i = 1; i <= 3; i++) {  
+      if (from.id % columns !== 0 && secondStartDigit + i < (columns + 1)) {
+        tiles.add(from.id + i);
+      }
+      if (from.id % columns === 0 || secondStartDigit - i > 0) {
+        tiles.add(from.id - i);
+      }
+      tiles.add(from.id + (columns * i));
+      tiles.add(from.id - (columns * i));
+    }
+    const legalTiles = [...tiles].filter((tile) => tile > 0 && tile <= rows * columns);
+    this.setState({tilesToMove: legalTiles, actionsDisabled: true});
+  }
+
   skip() {
     this.props.players[this.state.activePlayer].money += 100;
     this.changeTurn(this.state.board);
@@ -193,7 +214,8 @@ class Game extends React.Component {
             <Board board={this.state.board} tilesToMove={this.state.tilesToMove} onMove={this.move}/>
           </div>
           <div className="action-area">
-            <ActionPanel disabled={this.state.actionsDisabled} actions={{skip: this.skip, roll: this.roll}}/>
+            <ActionPanel disabled={this.state.actionsDisabled} money={this.props.players[this.state.activePlayer].money}
+              actions={{skip: this.skip, roll: this.roll, helicopter: this.helicopter}}/>
           </div>
         </div>
         {encounter}
