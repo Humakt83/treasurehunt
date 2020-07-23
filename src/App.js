@@ -25,7 +25,7 @@ class App extends React.Component {
 
   addPlayer() {
     const players = this.state.players;
-    players.push({name: `Player ${players.length + 1}`, money: 1000, color: playerColors[players.length]});
+    players.push({name: `Player ${players.length + 1}`, money: 500, color: playerColors[players.length]});
     this.setState({players});
   }
 

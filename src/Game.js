@@ -34,6 +34,7 @@ class Game extends React.Component {
     this.skip = this.skip.bind(this);
     this.roll = this.roll.bind(this);
     this.helicopter = this.helicopter.bind(this);
+    this.ship = this.ship.bind(this);
   }  
 
   isEmpty(board, location) {
@@ -173,14 +174,12 @@ class Game extends React.Component {
     }
   }
 
-  helicopter() {
+  movableTilesToAnyDirection(player, travelAmount) {
     const board = this.state.board;
-    const player = this.props.players[this.state.activePlayer];
-    player.money -= 1000;
     const from = board.find((slot) => slot.obj && slot.obj.name === player.name);
     const tiles = new Set();
     const secondStartDigit = from.id < 10 ? from.id : Number.parseInt(('' + from.id)[1]);
-    for (let i = 1; i <= 3; i++) {  
+    for (let i = 1; i <= travelAmount; i++) {  
       if (from.id % columns !== 0 && secondStartDigit + i < (columns + 1)) {
         tiles.add(from.id + i);
       }
@@ -192,6 +191,18 @@ class Game extends React.Component {
     }
     const legalTiles = [...tiles].filter((tile) => tile > 0 && tile <= rows * columns);
     this.setState({tilesToMove: legalTiles, actionsDisabled: true});
+  }
+
+  helicopter() {
+    const player = this.props.players[this.state.activePlayer];
+    player.money -= 1000;
+    this.movableTilesToAnyDirection(player, 3);
+  }
+
+  ship() {
+    const player = this.props.players[this.state.activePlayer];
+    player.money -= 300;
+    this.movableTilesToAnyDirection(player, 1);
   }
 
   skip() {
@@ -215,7 +226,7 @@ class Game extends React.Component {
           </div>
           <div className="action-area">
             <ActionPanel disabled={this.state.actionsDisabled} money={this.props.players[this.state.activePlayer].money}
-              actions={{skip: this.skip, roll: this.roll, helicopter: this.helicopter}}/>
+              actions={{skip: this.skip, roll: this.roll, helicopter: this.helicopter, ship: this.ship}}/>
           </div>
         </div>
         {encounter}
