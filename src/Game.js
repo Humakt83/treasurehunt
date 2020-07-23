@@ -165,7 +165,7 @@ class Game extends React.Component {
   roll() {
     const rollAmount = 1 + Math.floor(Math.random() * 3);
     const tilesToMove = this.moveableTiles(this.props.players[this.state.activePlayer], this.state.board, rollAmount);
-    if (tilesToMove.length > 1) {
+    if (tilesToMove.length > 0) {
       this.setState({actionsDisabled: true, rolled: rollAmount, tilesToMove});
     } else {
       this.setState({rolled: rollAmount});
