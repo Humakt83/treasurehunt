@@ -60,6 +60,7 @@ class Game extends React.Component {
     }
     players.forEach((player) => {
       const x = this.findFreePlace(board, () => Math.floor(Math.random() * columns));
+      board[x].objs.push({type: 'home', obj: {owner: player, color: player.color, permanent: true}});
       board[x].objs.push({type: 'player', obj: player});
     });
     for (let i = 0; i < thieves; i++) {
@@ -152,7 +153,7 @@ class Game extends React.Component {
     from.objs = from.objs.filter(obj => !obj.obj || obj.obj.name !== activePlayer.name);
     const encounterables = to.objs.filter((obj) => encounterMap[obj.type]);
     to.objs.push({type: 'player', obj: activePlayer});
-    to.objs = to.objs.filter((obj) => obj.type === 'player');
+    to.objs = to.objs.filter((obj) => obj.type === 'player' || (obj.obj && obj.obj.permanent));
     encounterables.forEach((obj) => {
       if (encounterMap[obj.type]) {
         const encounter = encounterMap[obj.type];

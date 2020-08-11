@@ -5,7 +5,8 @@ const emojiMap = {
   'player': '😀',
   'thief': '🤠',
   'money': '💰',
-  'treasure': '💎'
+  'treasure': '💎',
+  'home': 'H',
 };
 
 export default class Board extends React.Component {
@@ -27,8 +28,8 @@ export default class Board extends React.Component {
           {slot.objs.map((obj, index) => {
             const emoji = emojiMap[obj.type]; 
             const key = index + '-' + obj.type;
-            if (obj.type === 'player') {
-              const className =  'player player--' + obj.obj.color;
+            if (obj.type === 'player' || obj.type === 'home') {
+              const className =  `${obj.type} ${obj.type}--${obj.obj.color}`;
               return <span key={key} className={className} aria-label={obj.type} role="img">{emoji}</span>;
             } else {
               return <span key={key}>{emoji}</span>;

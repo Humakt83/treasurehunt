@@ -68,6 +68,7 @@
   right: -15%;
 }
 
+.home,
 .player {
   @each $color in $player-colors {
     &--#{$color} {
