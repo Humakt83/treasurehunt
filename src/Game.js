@@ -22,7 +22,7 @@ const encounterMap = {
   treasure: {
     message: 'You found the treasure!',
     action: (player) => player.treasure = true,
-  }
+  },
 };
 
 class Game extends React.Component {
@@ -38,7 +38,7 @@ class Game extends React.Component {
   }  
 
   isEmpty(board, location) {
-    return board[location].type === 'tile';
+    return board[location].objs.length <= 0;
   }
 
   findFreePlace(board, locationFn) {
@@ -55,24 +55,23 @@ class Game extends React.Component {
     const board = [];
     for (let y = 0; y < rows; y++) {      
       for (let x = 0; x < columns; x++) {
-        board.push({type: 'tile', paths: [], id: board.length + 1});
+        board.push({objs: [], paths: [], id: board.length + 1});
       }
     }
     players.forEach((player) => {
       const x = this.findFreePlace(board, () => Math.floor(Math.random() * columns));
-      board[x].type = 'player';
-      board[x].obj = player;
+      board[x].objs.push({type: 'player', obj: player});
     });
     for (let i = 0; i < thieves; i++) {
       const x = this.findFreePlace(board, () => Math.max(20, Math.floor(Math.random() * columns * rows)));
-      board[x].type = 'thief';
+      board[x].objs.push({type: 'thief'});
     }
     for (let i = 0; i < money; i++) {
       const x = this.findFreePlace(board, () => Math.max(10, Math.floor(Math.random() * columns * rows)));
-      board[x].type = 'money';
+      board[x].objs.push({type: 'money'});
     }
     const x = this.findFreePlace(board, () => Math.max(20, Math.floor(Math.random() * columns * rows)));
-    board[x].type = 'treasure';
+    board[x].objs.push({type: 'treasure'});
     board.forEach((tile, index) => {
       const paths = [];
       if (index > 0 && board[index -1].paths.includes('east')) {
@@ -100,8 +99,13 @@ class Game extends React.Component {
     this.setState({activePlayer, board, tilesToMove: [], actionsDisabled: false});
   }
 
+  findPlayerSlot(player) {
+    const board = this.state.board;
+    return board.find((slot) => slot.objs && slot.objs.find(obj => obj.obj && obj.obj.name === player.name));
+  }
+
   moveableTiles(activePlayer, board, rollAmount, slotPassed = null, fromDirection = null) {
-    const slot = slotPassed ? board[slotPassed - 1] : board.find((slot) => slot.obj && slot.obj.name === activePlayer.name);
+    const slot = slotPassed ? board[slotPassed - 1] : this.findPlayerSlot(activePlayer);
     const tiles = slot.paths
       .filter((path) => !fromDirection 
         || (fromDirection === 'north' && path !== 'south')
@@ -144,21 +148,23 @@ class Game extends React.Component {
     const board = this.state.board;
     const to = board.find((tile) => tile.id === tileId);
     const activePlayer = this.props.players[this.state.activePlayer];
-    const from = board.find((slot) => slot.obj && slot.obj.name === activePlayer.name);
-    from.type = 'tile';
-    from.obj = null;
-    const originalType = to.type;
-    to.obj = activePlayer;
-    to.type = 'player';
-    if (encounterMap[originalType]) {
-      const encounter = encounterMap[originalType];
-      encounter.action(activePlayer);
-      encounter.continue = () => {        
-        this.setState({encounter: null});
-        this.changeTurn(board)
-      };
-      this.setState({encounter});
-    } else {
+    const from = this.findPlayerSlot(activePlayer);
+    from.objs = from.objs.filter(obj => !obj.obj || obj.obj.name !== activePlayer.name);
+    const encounterables = to.objs.filter((obj) => encounterMap[obj.type]);
+    to.objs.push({type: 'player', obj: activePlayer});
+    to.objs = to.objs.filter((obj) => obj.type === 'player');
+    encounterables.forEach((obj) => {
+      if (encounterMap[obj.type]) {
+        const encounter = encounterMap[obj.type];
+        encounter.action(activePlayer);
+        encounter.continue = () => {        
+          this.setState({encounter: null});
+          this.changeTurn(board)
+        };
+        this.setState({encounter});
+      }
+    });
+    if (encounterables.length <= 0) {
       this.changeTurn(board);
     }
   }
@@ -175,8 +181,7 @@ class Game extends React.Component {
   }
 
   movableTilesToAnyDirection(player, travelAmount) {
-    const board = this.state.board;
-    const from = board.find((slot) => slot.obj && slot.obj.name === player.name);
+    const from = this.findPlayerSlot(player);
     const tiles = new Set();
     const secondStartDigit = from.id < 10 ? from.id : Number.parseInt(('' + from.id)[1]);
     for (let i = 1; i <= travelAmount; i++) {  

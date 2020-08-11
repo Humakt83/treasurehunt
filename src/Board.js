@@ -5,8 +5,7 @@ const emojiMap = {
   'player': '😀',
   'thief': '🤠',
   'money': '💰',
-  'treasure': '💎',
-  'tile': '🟩'
+  'treasure': '💎'
 };
 
 export default class Board extends React.Component {
@@ -15,12 +14,7 @@ export default class Board extends React.Component {
     const board = this.props.board;
     const moveableTiles = this.props.tilesToMove;
     const table = [];
-    board.forEach((slot, index) => {
-      let slotType = emojiMap[slot.type];
-      if (slot.type === 'player') {
-        const className =  'player player--' + slot.obj.color;
-        slotType = <span className={className} aria-label={slot.type} role="img">{slotType}</span>;
-      }
+    board.forEach((slot, index) => {      
       const moveable = moveableTiles.includes(slot.id)
       const clickFn = moveable ? this.props.onMove : (event) => event.preventDefault();
       const tileClassName = moveable ? 'tile tile--movable' : 'tile';
@@ -30,7 +24,16 @@ export default class Board extends React.Component {
             const key = index + '-' + path;
             return <div key={key} className={'path ' + path}></div>;
           })}
-          {slotType}
+          {slot.objs.map((obj, index) => {
+            const emoji = emojiMap[obj.type]; 
+            const key = index + '-' + obj.type;
+            if (obj.type === 'player') {
+              const className =  'player player--' + obj.obj.color;
+              return <span key={key} className={className} aria-label={obj.type} role="img">{emoji}</span>;
+            } else {
+              return <span key={key}>{emoji}</span>;
+            }
+          })}
         </div>);
     });
     return table;
