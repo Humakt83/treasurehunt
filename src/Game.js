@@ -4,6 +4,7 @@ import Board from './Board';
 import ActionPanel from './ActionPanel';
 import './Game.scss';
 import EncounterModal from './EncounterModal';
+import GameOverCurtain from './GameOverCurtain';
 
 const rows = 10;
 const columns = 10;
@@ -16,13 +17,18 @@ const encounterMap = {
     action: (player) => player.money = 0,
   },
   money: {
-    message: `You found 500 money!`,
+    message: `You found a jewel worth 500 €!`,
     action: (player) => player.money += 500, 
   },
   treasure: {
     message: 'You found the treasure!',
     action: (player) => player.treasure = true,
   },
+  home: {
+    hasAnyEffect: (player, home) => player.treasure && home.owner === player,
+    message: 'You have reached home with the treasure, you are victorious!',
+    action: (player) => player.winner = true,
+  }
 };
 
 class Game extends React.Component {
@@ -93,6 +99,10 @@ class Game extends React.Component {
   }
 
   changeTurn(board) {
+    if (this.props.players[this.state.activePlayer].winner) {
+      this.setState({gameOver: true});
+      return;
+    }
     let activePlayer = this.state.activePlayer + 1;
     if (activePlayer + 1 > this.props.players.length) {
       activePlayer = 0;
@@ -151,7 +161,7 @@ class Game extends React.Component {
     const activePlayer = this.props.players[this.state.activePlayer];
     const from = this.findPlayerSlot(activePlayer);
     from.objs = from.objs.filter(obj => !obj.obj || obj.obj.name !== activePlayer.name);
-    const encounterables = to.objs.filter((obj) => encounterMap[obj.type]);
+    const encounterables = to.objs.filter((obj) => encounterMap[obj.type] && (!encounterMap[obj.type].hasAnyEffect || encounterMap[obj.type].hasAnyEffect(activePlayer, obj.obj)));
     to.objs.push({type: 'player', obj: activePlayer});
     to.objs = to.objs.filter((obj) => obj.type === 'player' || (obj.obj && obj.obj.permanent));
     encounterables.forEach((obj) => {
@@ -219,7 +229,11 @@ class Game extends React.Component {
   render() {
     let encounter = '';
     if (this.state.encounter) {
-      encounter = <EncounterModal encounter={this.state.encounter} />
+      encounter = <EncounterModal encounter={this.state.encounter} />;
+    }
+    let gameOver = ''
+    if (this.state.gameOver) {
+      gameOver = <GameOverCurtain players={this.props.players}/>;
     }
     return (
       <section>
@@ -235,6 +249,7 @@ class Game extends React.Component {
               actions={{skip: this.skip, roll: this.roll, helicopter: this.helicopter, ship: this.ship}}/>
           </div>
         </div>
+        {gameOver}
         {encounter}
       </section>
     )
