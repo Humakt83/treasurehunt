@@ -1,9 +1,9 @@
 import React from 'react';
 import Game from './Game';
 import './App.scss';
+import {createPlayer} from './objects/Player';
 
 const maximumPlayers = 8;
-const playerColors = ['blue', 'red', 'yellow', 'white', 'black', 'tan', 'cyan', 'lightgray']
 
 class App extends React.Component {
   constructor(props) {
@@ -25,7 +25,7 @@ class App extends React.Component {
 
   addPlayer() {
     const players = this.state.players;
-    players.push({name: `Player ${players.length + 1}`, money: 500, color: playerColors[players.length]});
+    players.push(createPlayer(`Player ${players.length + 1}`, players.length));
     this.setState({players});
   }
 

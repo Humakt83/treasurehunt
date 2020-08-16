@@ -66,7 +66,7 @@ class Game extends React.Component {
     }
     players.forEach((player) => {
       const x = this.findFreePlace(board, () => Math.floor(Math.random() * columns));
-      board[x].objs.push({type: 'home', obj: {owner: player, color: player.color, permanent: true}});
+      board[x].objs.push({type: 'home', obj: player.home});
       board[x].objs.push({type: 'player', obj: player});
     });
     for (let i = 0; i < thieves; i++) {

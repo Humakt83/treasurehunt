@@ -8,7 +8,7 @@ export default class Players extends React.Component {
       const active = activePlayer === index ? ' player--active': '';
       const className = 'player player--' + player.color + active;
       return <div className={className} key={index}>
-        <span>{player.name}</span>
+        <span>{player.emoji} {player.name}</span>
         <span className="money">{player.money}€</span>
       </div>
     });
