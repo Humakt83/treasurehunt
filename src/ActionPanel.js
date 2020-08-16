@@ -1,5 +1,6 @@
 import React from 'react';
 import './ActionPanel.scss';
+import Dice from './Dice';
 
 export default class ActionPanel extends React.Component {
 
@@ -20,6 +21,7 @@ export default class ActionPanel extends React.Component {
             <span aria-label="work to earn 100 money" role="img">🔨</span>
           </button>
         </div>
+        <Dice roll={this.props.roll} rollToggle={this.props.rollToggle}/>
       </section>
     )
   }

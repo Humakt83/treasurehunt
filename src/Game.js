@@ -183,10 +183,11 @@ class Game extends React.Component {
   roll() {
     const rollAmount = 1 + Math.floor(Math.random() * 3);
     const tilesToMove = this.moveableTiles(this.props.players[this.state.activePlayer], this.state.board, rollAmount);
+    const oddOrEven = this.state.rollToggle ? false : true;
     if (tilesToMove.length > 0) {
-      this.setState({actionsDisabled: true, rolled: rollAmount, tilesToMove});
+      this.setState({actionsDisabled: true, rolled: rollAmount, tilesToMove, rollToggle: oddOrEven});
     } else {
-      this.setState({rolled: rollAmount});
+      this.setState({rolled: rollAmount, rollToggle: oddOrEven});
       this.changeTurn(this.state.board);
     }
   }
@@ -246,7 +247,8 @@ class Game extends React.Component {
           </div>
           <div className="action-area">
             <ActionPanel disabled={this.state.actionsDisabled} money={this.props.players[this.state.activePlayer].money}
-              actions={{skip: this.skip, roll: this.roll, helicopter: this.helicopter, ship: this.ship}}/>
+              actions={{skip: this.skip, roll: this.roll, helicopter: this.helicopter, ship: this.ship}}
+              roll={this.state.rolled} rollToggle={this.state.rollToggle}/>
           </div>
         </div>
         {gameOver}
