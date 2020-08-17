@@ -1,12 +1,6 @@
 import React from 'react';
 import './Board.scss';
 
-const emojiMap = {
-  'thief': '🤠',
-  'money': '💰',
-  'treasure': '💎',
-};
-
 export default class Board extends React.Component {
 
   constructMap() {
@@ -24,13 +18,12 @@ export default class Board extends React.Component {
             return <div key={key} className={'path ' + path}></div>;
           })}
           {slot.objs.map((obj, index) => {
-            let emoji = emojiMap[obj.type]; 
             const key = index + '-' + obj.type;
             if (obj.type === 'player' || obj.type === 'home') {
               const className =  `${obj.type} ${obj.type}--${obj.obj.color}`;
               return <span key={key} className={className} aria-label={obj.type} role="img">{obj.obj.emoji}</span>;
             } else {
-              return <span key={key}>{emoji}</span>;
+              return <span className="secret" role="img" aria-label="something to pick" key={key}>❓</span>;
             }
           })}
         </div>);

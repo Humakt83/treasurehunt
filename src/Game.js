@@ -13,14 +13,17 @@ const thieves = 4;
 
 const encounterMap = {
   thief: {
+    emoji: '🤠',
     message: `You have been robbed!`,
     action: (player) => player.money = 0,
   },
   money: {
+    emoji: '💰',
     message: `You found a jewel worth 500 €!`,
     action: (player) => player.money += 500, 
   },
   treasure: {
+    emoji: '💎',
     message: 'You found the treasure!',
     action: (player) => player.treasure = true,
   },

@@ -12,6 +12,7 @@
   overflow: hidden;
   background-color: rgba(0,0,0,0.5);
   text-align: center;
+  z-index: 20;
   .modal {
     top: 10vh;    
     vertical-align: middle;
@@ -26,6 +27,9 @@
     background-color: white;
     box-shadow: 0 0 5px 8px gold;
     animation: modalAppear ease-in-out 0.5s;
+    .modal-emoji {
+      font-size: xx-large;
+    }
     button {
       font-weight: bold;
       font-size: 25px;
