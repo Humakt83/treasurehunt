@@ -8,8 +8,9 @@ import GameOverCurtain from './GameOverCurtain';
 
 const rows = 10;
 const columns = 10;
-const money = 20;
-const thieves = 4;
+const money = 25;
+const thieves = 5;
+const fruits = 5;
 
 const encounterMap = {
   thief: {
@@ -19,13 +20,21 @@ const encounterMap = {
   },
   money: {
     emoji: '💰',
-    message: `You found a jewel worth 500 €!`,
+    message: `You found a jewel worth 500€!`,
     action: (player) => player.money += 500, 
   },
   treasure: {
     emoji: '💎',
     message: 'You found the treasure!',
     action: (player) => player.treasure = true,
+  },
+  fruit: {
+    emoji: '🍍',
+    message: 'You found a refreshing fruit and can move again!',
+    action: (player, game) => {
+      const previousPlayer = player.id === 0 ? game.props.players.length -1 : player.id -1;
+      game.setState({activePlayer: previousPlayer})
+    },
   },
   home: {
     hasAnyEffect: (player, home) => player.treasure && home.owner === player,
@@ -76,6 +85,10 @@ class Game extends React.Component {
       const x = this.findFreePlace(board, () => Math.max(20, Math.floor(Math.random() * columns * rows)));
       board[x].objs.push({type: 'thief'});
     }
+    for (let i = 0; i < fruits; i++) {
+      const x = this.findFreePlace(board, () => Math.max(10, Math.floor(Math.random() * columns * rows)));
+      board[x].objs.push({type: 'fruit'});
+    }
     for (let i = 0; i < money; i++) {
       const x = this.findFreePlace(board, () => Math.max(10, Math.floor(Math.random() * columns * rows)));
       board[x].objs.push({type: 'money'});
@@ -101,12 +114,12 @@ class Game extends React.Component {
     return board;
   }
 
-  changeTurn(board) {
+  changeTurn(board, modificationToTurnOrder = 0) {
     if (this.props.players[this.state.activePlayer].winner) {
       this.setState({gameOver: true});
       return;
     }
-    let activePlayer = this.state.activePlayer + 1;
+    let activePlayer = this.state.activePlayer + 1 + modificationToTurnOrder;
     if (activePlayer + 1 > this.props.players.length) {
       activePlayer = 0;
     }
@@ -170,8 +183,8 @@ class Game extends React.Component {
     encounterables.forEach((obj) => {
       if (encounterMap[obj.type]) {
         const encounter = encounterMap[obj.type];
-        encounter.action(activePlayer);
-        encounter.continue = () => {        
+        encounter.action(activePlayer, this);
+        encounter.continue = () => {
           this.setState({encounter: null});
           this.changeTurn(board)
         };

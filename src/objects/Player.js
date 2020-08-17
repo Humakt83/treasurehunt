@@ -10,6 +10,7 @@ export const createPlayer = (name, index) => {
     money: 500,
     treasure: false,
     winner: false,
+    id: index,
   };
   player.home = {owner: player, color: player.color, permanent: true, emoji: homes[index]}
   return player;
