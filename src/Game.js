@@ -13,33 +13,44 @@ const thieves = 5;
 const fruits = 5;
 
 const encounterMap = {
-  thief: {
-    emoji: '🤠',
-    message: `You have been robbed!`,
-    action: (player) => player.money = 0,
+  thief: () => {
+    return {
+      emoji: '🤠',
+      message: `You have been robbed!`,
+      action: (player) => player.money = 0,
+    };
   },
-  money: {
-    emoji: '💰',
-    message: `You found a jewel worth 500€!`,
-    action: (player) => player.money += 500, 
+  money: () => {
+    const amount = Math.floor(Math.random() * 9) * 100;
+    return {
+      emoji: '💰',
+      message: `You found a jewel worth ${amount}€!`,
+      action: (player) => player.money += amount, 
+    };
   },
-  treasure: {
-    emoji: '💎',
-    message: 'You found the treasure!',
-    action: (player) => player.treasure = true,
+  treasure: () => {
+    return {
+      emoji: '💎',
+      message: 'You found the treasure!',
+      action: (player) => player.treasure = true,
+    }    
   },
-  fruit: {
-    emoji: '🍍',
-    message: 'You found a refreshing fruit and can move again!',
-    action: (player, game) => {
-      const previousPlayer = player.id === 0 ? game.props.players.length -1 : player.id -1;
-      game.setState({activePlayer: previousPlayer})
-    },
+  fruit: () => {
+    return {
+      emoji: '🍍',
+      message: 'You found a refreshing fruit and can move again!',
+      action: (player, game) => {
+        const previousPlayer = player.id === 0 ? game.props.players.length -1 : player.id -1;
+        game.setState({activePlayer: previousPlayer});
+      }
+    };
   },
-  home: {
-    hasAnyEffect: (player, home) => player.treasure && home.owner === player,
-    message: 'You have reached home with the treasure, you are victorious!',
-    action: (player) => player.winner = true,
+  home: () => {
+    return {
+      hasAnyEffect: (player, home) => player.treasure && home.owner === player,
+      message: 'You have reached home with the treasure, you are victorious!',
+      action: (player) => player.winner = true,
+    };
   }
 };
 
@@ -182,7 +193,7 @@ class Game extends React.Component {
     to.objs = to.objs.filter((obj) => obj.type === 'player' || (obj.obj && obj.obj.permanent));
     encounterables.forEach((obj) => {
       if (encounterMap[obj.type]) {
-        const encounter = encounterMap[obj.type];
+        const encounter = encounterMap[obj.type]();
         encounter.action(activePlayer, this);
         encounter.continue = () => {
           this.setState({encounter: null});
