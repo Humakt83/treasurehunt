@@ -4,23 +4,69 @@ import Dice from './Dice';
 
 export default class ActionPanel extends React.Component {
 
+  constructor(props) {
+    super(props);
+    this.handleKeyDown = this.handleKeyDown.bind(this);
+  }
+
+  handleKeyDown(event) {
+    switch (event.keyCode) {
+      case 82:
+        if (!this.actionsDisabled()) {
+          this.props.actions.roll();
+        }
+        break;
+      case 83:
+        if (!this.actionsDisabled()) {
+          this.props.actions.skip();
+        }
+        break;
+      default:
+        break;
+    }
+  }
+
+  componentDidMount() {
+    document.addEventListener('keydown', this.handleKeyDown);
+  }
+
+  componentWillUnmount() {
+    document.removeEventListener('keydown', this.handleKeyDown);
+  }
+
+  actionsDisabled() {
+    return this.props.disabled;
+  }
+
+  shipDisabled() {
+    return this.actionsDisabled() || this.props.player.money < 300;
+  }
+
+  helicopterDisabled() {
+    return this.actionsDisabled() || this.props.player.money < 1000
+  }
+
+  buyFakeDocumentsDisabled() {
+    return this.actionsDisabled() || this.props.player.money < 1000 || !!this.props.player.fakeDocuments;
+  }
+
   render() {
     return (
       <section>
         <div className="action-panel">
-          <button disabled={this.props.disabled} onClick={this.props.actions.roll}>
+          <button disabled={this.actionsDisabled()} onClick={this.props.actions.roll}>
             <span aria-label="roll" role="img">🎲</span>
           </button>
-          <button disabled={this.props.disabled || this.props.player.money < 300} onClick={this.props.actions.ship}>
+          <button disabled={this.shipDisabled()} onClick={this.props.actions.ship}>
             <span aria-label="ship costs 300" role="img">🛶</span>
           </button>
-          <button disabled={this.props.disabled || this.props.player.money < 1000} onClick={this.props.actions.helicopter}>
+          <button disabled={this.helicopterDisabled()} onClick={this.props.actions.helicopter}>
             <span aria-label="helicopter costs 1000" role="img">🚁</span>
           </button>
-          <button onClick={this.props.actions.skip} disabled={this.props.disabled}>
+          <button onClick={this.props.actions.skip} disabled={this.actionsDisabled()}>
             <span aria-label="work to earn 100 money" role="img">🔨</span>
           </button>
-          <button disabled={this.props.disabled || this.props.player.money < 1000 || !!this.props.player.fakeDocuments} onClick={this.props.actions.buyFakeDocuments}>
+          <button disabled={this.buyFakeDocumentsDisabled() } onClick={this.props.actions.buyFakeDocuments}>
             <span aria-label="fake documents cost 1000 money" role="img">📜</span>
           </button>
         </div>
