@@ -21,7 +21,7 @@ const encounterMap = {
     };
   },
   money: () => {
-    const amount = Math.floor(Math.random() * 9) * 100;
+    const amount = Math.ceil(Math.random() * 10) * 100;
     return {
       emoji: '💰',
       message: `You found a jewel worth ${amount}€!`,
@@ -51,6 +51,22 @@ const encounterMap = {
       message: 'You have reached home with the treasure, you are victorious!',
       action: (player) => player.winner = true,
     };
+  },
+  player: () => {
+    return {
+      hasAnyEffect: (player, anotherPlayer) => {
+        const hasEffect = player.fakeDocuments && anotherPlayer.treasure;
+        console.log(hasEffect);
+        return hasEffect;
+      },
+      emoji: '📜',
+      message: 'You use fake documents to claim that treasure is yours by right',
+      action: (player, game) => {
+        player.fakeDocuments = false;
+        game.props.players.find(player => player.treasure).treasure = false;
+        player.treasure = true;
+      }
+    }
   }
 };
 
@@ -64,6 +80,7 @@ class Game extends React.Component {
     this.roll = this.roll.bind(this);
     this.helicopter = this.helicopter.bind(this);
     this.ship = this.ship.bind(this);
+    this.buyFakeDocuments = this.buyFakeDocuments.bind(this);
   }  
 
   isEmpty(board, location) {
@@ -188,7 +205,7 @@ class Game extends React.Component {
     const activePlayer = this.props.players[this.state.activePlayer];
     const from = this.findPlayerSlot(activePlayer);
     from.objs = from.objs.filter(obj => !obj.obj || obj.obj.name !== activePlayer.name);
-    const encounterables = to.objs.filter((obj) => encounterMap[obj.type] && (!encounterMap[obj.type].hasAnyEffect || encounterMap[obj.type].hasAnyEffect(activePlayer, obj.obj)));
+    const encounterables = to.objs.filter((obj) => encounterMap[obj.type] && (!encounterMap[obj.type]().hasAnyEffect || encounterMap[obj.type]().hasAnyEffect(activePlayer, obj.obj)));
     to.objs.push({type: 'player', obj: activePlayer});
     to.objs = to.objs.filter((obj) => obj.type === 'player' || (obj.obj && obj.obj.permanent));
     encounterables.forEach((obj) => {
@@ -254,6 +271,13 @@ class Game extends React.Component {
     this.changeTurn(this.state.board);
   }
 
+  buyFakeDocuments() {
+    const player = this.props.players[this.state.activePlayer];
+    player.money -= 1000;
+    player.fakeDocuments = true;
+    this.changeTurn(this.state.board);
+  }
+
   render() {
     let encounter = '';
     if (this.state.encounter) {
@@ -273,8 +297,8 @@ class Game extends React.Component {
             <Board board={this.state.board} tilesToMove={this.state.tilesToMove} onMove={this.move}/>
           </div>
           <div className="action-area">
-            <ActionPanel disabled={this.state.actionsDisabled} money={this.props.players[this.state.activePlayer].money}
-              actions={{skip: this.skip, roll: this.roll, helicopter: this.helicopter, ship: this.ship}}
+            <ActionPanel disabled={this.state.actionsDisabled} player={this.props.players[this.state.activePlayer]}
+              actions={{skip: this.skip, roll: this.roll, helicopter: this.helicopter, ship: this.ship, buyFakeDocuments: this.buyFakeDocuments}}
               roll={this.state.rolled} rollToggle={this.state.rollToggle}/>
           </div>
         </div>

@@ -7,9 +7,11 @@ export default class Players extends React.Component {
     const players = this.props.players.map((player, index) => {
       const active = activePlayer === index ? ' player--active': '';
       const className = 'player player--' + player.color + active;
+      const treasure = player.treasure ? ' 💎' : '';
+      const fakeDocuments = player.fakeDocuments ? ' 📜' : '';
       return <div className={className} key={index}>
         <span>{player.emoji} {player.name}</span>
-        <span className="money">{player.money}€</span>
+        <span className="money">{player.money}€{treasure}{fakeDocuments}</span>
       </div>
     });
     
