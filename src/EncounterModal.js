@@ -3,6 +3,10 @@ import './EncounterModal.scss';
 
 export default class EncounterModal extends React.Component {
 
+  componentDidMount() {
+    this.confirmButton.focus();
+  }
+
   render() {
     const emoji = this.props.encounter.emoji ? <p className="modal-emoji">{this.props.encounter.emoji}</p> : '';
     return (
@@ -11,7 +15,12 @@ export default class EncounterModal extends React.Component {
           <div className="modal">
             {emoji}
             <p>{this.props.encounter.message}</p>
-            <button className="confirmButton" onClick={this.props.encounter.continue}>OK</button>
+            <button 
+              ref={(button) => this.confirmButton = button}
+              className="confirmButton"
+              onClick={this.props.encounter.continue}>
+              OK
+            </button>
           </div>
         </div>
       </section>
