@@ -1,11 +1,11 @@
 import React from 'react';
-import Game from './Game';
-import './App.scss';
-import {createPlayer} from './objects/Player';
+import Game from '../game/Game';
+import './Setup.scss';
+import {createPlayer} from '../../objects/Player';
 
 const maximumPlayers = 8;
 
-class App extends React.Component {
+export default class Setup extends React.Component {
   constructor(props) {
     super(props);
     this.state = { players: []};
@@ -47,13 +47,13 @@ class App extends React.Component {
     let playerNames = this.state.players.map((item, index) => <input key={index} value={item.name} onChange={(value) => this.changeName(value, index)}></input>);    
     return (
 
-      <div className="App">
-        <header className="App-header">
-          <span role="img" className="App-logo-money" aria-label="money">💶</span>
-          <span role="img" className="App-logo-money" aria-label="money">💰</span>
-          <span role="img" className="App-logo" aria-label="treasure">💎</span>
-          <span role="img" className="App-logo-money" aria-label="money">💰</span>
-          <span role="img" className="App-logo-money" aria-label="money">💶</span>
+      <div className="setup">
+        <header className="setup-header">
+          <span role="img" className="setup-logo-money" aria-label="money">💶</span>
+          <span role="img" className="setup-logo-money" aria-label="money">💰</span>
+          <span role="img" className="setup-logo" aria-label="treasure">💎</span>
+          <span role="img" className="setup-logo-money" aria-label="money">💰</span>
+          <span role="img" className="setup-logo-money" aria-label="money">💶</span>
         </header>
         <div>
           <button onClick={this.addPlayer} disabled={this.state.players.length >= maximumPlayers}>Add player</button>
@@ -64,5 +64,3 @@ class App extends React.Component {
     );
   }
 }
-
-export default App;

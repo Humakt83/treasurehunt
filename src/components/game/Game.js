@@ -3,8 +3,8 @@ import Players from './Players';
 import Board from './Board';
 import ActionPanel from './ActionPanel';
 import './Game.scss';
-import EncounterModal from './EncounterModal';
-import GameOverCurtain from './GameOverCurtain';
+import EncounterModal from '../modals/EncounterModal';
+import GameOverCurtain from '../modals/GameOverCurtain';
 
 const rows = 10;
 const columns = 10;
