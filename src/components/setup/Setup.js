@@ -2,6 +2,7 @@ import React from 'react';
 import Game from '../game/Game';
 import './Setup.scss';
 import {createPlayer} from '../../objects/Player';
+import Info from './Info';
 
 const maximumPlayers = 8;
 
@@ -60,6 +61,7 @@ export default class Setup extends React.Component {
           <button onClick={this.startGame} disabled={this.isInvalidToStart()}>Start game</button>
           {playerNames}
         </div>
+        <Info />
       </div>
     );
   }

@@ -1,12 +1,16 @@
 import React from 'react';
 import './ActionPanel.scss';
 import Dice from './Dice';
+import HelpModal from '../modals/HelpModal';
 
 export default class ActionPanel extends React.Component {
 
   constructor(props) {
     super(props);
     this.handleKeyDown = this.handleKeyDown.bind(this);
+    this.state = {showHelp: false};
+    this.showHelp = this.showHelp.bind(this);
+    this.hideHelp = this.hideHelp.bind(this);
   }
 
   handleKeyDown(event) {
@@ -54,7 +58,16 @@ export default class ActionPanel extends React.Component {
     return this.actionsDisabled() || this.props.player.onVolcano
   }
 
+  showHelp() {
+    this.setState({showHelp: true});
+  }
+
+  hideHelp() {
+    this.setState({showHelp: false});
+  }
+
   render() {
+    const helpModal = this.state.showHelp ? <HelpModal closeHelp={this.hideHelp} /> : '';
     return (
       <section>
         <div className="action-panel">
@@ -73,8 +86,12 @@ export default class ActionPanel extends React.Component {
           <button disabled={this.buyFakeDocumentsDisabled() } onClick={this.props.actions.buyFakeDocuments}>
             <span aria-label="fake documents cost 1000 money" role="img">📜</span>
           </button>
+          <button onClick={this.showHelp}>
+            <span aria-label="help" role="img">❓</span>
+          </button>
         </div>
         <Dice roll={this.props.roll} rollToggle={this.props.rollToggle}/>
+        {helpModal}
       </section>
     )
   }

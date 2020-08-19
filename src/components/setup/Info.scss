@@ -1,0 +1,15 @@
+.info-container {
+  margin-top: 2rem;
+  position: relative;
+  display: inline-block;
+  border: 3px solid brown;
+  padding: 0.5rem 2rem;
+  background: linear-gradient(to right, sandybrown, sandybrown, yellow, sandybrown, sandybrown);
+  .info-main {
+    font-weight: bolder;
+    line-height: 2;
+    .name {
+      font-size: larger;
+    }
+  }
+}
