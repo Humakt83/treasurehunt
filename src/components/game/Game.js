@@ -11,6 +11,7 @@ const columns = 10;
 const money = 25;
 const thieves = 5;
 const fruits = 5;
+const trees = 15;
 
 const encounterMap = {
   thief: () => {
@@ -103,6 +104,11 @@ class Game extends React.Component {
       for (let x = 0; x < columns; x++) {
         board.push({objs: [], paths: [], id: board.length + 1});
       }
+    }
+    for (let i = 0; i < trees; i++) {
+      const x = this.findFreePlace(board, () => Math.max(10, Math.floor(Math.random() * columns * rows)));
+      const tree = Math.random() > 0.3 ? '🌴': '🌵';
+      board[x].objs.push({type: 'tree', obj: {permanent: true, emoji: tree}});
     }
     players.forEach((player) => {
       const x = this.findFreePlace(board, () => Math.floor(Math.random() * columns));

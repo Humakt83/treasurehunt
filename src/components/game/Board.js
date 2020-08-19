@@ -22,7 +22,9 @@ export default class Board extends React.Component {
             if (obj.type === 'player' || obj.type === 'home') {
               const className =  `${obj.type} ${obj.type}--${obj.obj.color}`;
               return <span key={key} className={className} aria-label={obj.type} role="img">{obj.obj.emoji}</span>;
-            } else {
+            } else if (obj.obj && obj.obj.permanent) {
+              return <span role="img" aria-label="something to pick" key={key}>{obj.obj.emoji}</span>;
+            } else {            
               return <span className="secret" role="img" aria-label="something to pick" key={key}>❓</span>;
             }
           })}
