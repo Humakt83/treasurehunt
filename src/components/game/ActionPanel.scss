@@ -1,3 +1,5 @@
+@import '../../variables.scss';
+
 $button-color: white;
 
 .action-panel {
@@ -11,6 +13,9 @@ $button-color: white;
     &:disabled {
       cursor: not-allowed;
       background-color: darken($button-color, 30%);
+    }
+    @media only screen and (max-width: $mobile) {
+      font-size: 25px;
     }
   }
 }

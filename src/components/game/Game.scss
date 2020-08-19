@@ -1,3 +1,4 @@
+@import '../../variables.scss';
 
 .game {
   display: grid;
@@ -11,21 +12,22 @@
     display: block;
     width: 100vw;
     background: linear-gradient(to right, #61dafb 10%, #aa99ba 80%, #61dafb);
-    padding: 1rem;
+    padding: 0.5rem;
     border-bottom: 2px solid black;
     grid-area: info;
+    max-height: 9vh;
+    @media only screen and (max-width: $tablet) {
+      padding: 0.3rem;
+    }
   }
 
   .board-area {
     grid-area: board;
+    max-height: 90vh;    
   }
 
   .action-area {
+    max-height: 90vh;
     grid-area: actions;
-  }
-
-  .finished {
-    position: fixed;
-    
   }
 }

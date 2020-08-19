@@ -1,3 +1,5 @@
+@import '../../variables.scss';
+
 .die-list {
   margin-top: 3rem;
   display: grid;
@@ -6,6 +8,10 @@
   transform-style: preserve-3d;
   width: 2rem;
   padding: 3px;
+
+  @media only screen and (max-width: $mobile) {
+    margin-top: 0.5rem;
+  }
 
   &.odd-roll,
   &.even-roll {
