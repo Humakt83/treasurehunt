@@ -17,7 +17,7 @@ export default class ActionPanel extends React.Component {
         }
         break;
       case 83:
-        if (!this.actionsDisabled()) {
+        if (!this.skipIsDisabled()) {
           this.props.actions.skip();
         }
         break;
@@ -47,7 +47,11 @@ export default class ActionPanel extends React.Component {
   }
 
   buyFakeDocumentsDisabled() {
-    return this.actionsDisabled() || this.props.player.money < 1000 || !!this.props.player.fakeDocuments;
+    return this.actionsDisabled() || this.props.player.onVolcano || this.props.player.money < 1000 || !!this.props.player.fakeDocuments;
+  }
+
+  skipIsDisabled() {
+    return this.actionsDisabled() || this.props.player.onVolcano
   }
 
   render() {
@@ -63,7 +67,7 @@ export default class ActionPanel extends React.Component {
           <button disabled={this.helicopterDisabled()} onClick={this.props.actions.helicopter}>
             <span aria-label="helicopter costs 1000" role="img">🚁</span>
           </button>
-          <button onClick={this.props.actions.skip} disabled={this.actionsDisabled()}>
+          <button onClick={this.props.actions.skip} disabled={this.skipIsDisabled()}>
             <span aria-label="work to earn 100 money" role="img">🔨</span>
           </button>
           <button disabled={this.buyFakeDocumentsDisabled() } onClick={this.props.actions.buyFakeDocuments}>

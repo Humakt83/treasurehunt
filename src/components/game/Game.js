@@ -56,9 +56,7 @@ const encounterMap = {
   player: () => {
     return {
       hasAnyEffect: (player, anotherPlayer) => {
-        const hasEffect = player.fakeDocuments && anotherPlayer.treasure;
-        console.log(hasEffect);
-        return hasEffect;
+        return player.fakeDocuments && anotherPlayer.treasure;
       },
       emoji: '📜',
       message: 'You use fake documents to claim that treasure is yours by right',
@@ -66,6 +64,17 @@ const encounterMap = {
         player.fakeDocuments = false;
         game.props.players.find(player => player.treasure).treasure = false;
         player.treasure = true;
+      }
+    }
+  },
+  volcano: () => {
+    return {
+      emoji: '🌋',
+      message: 'You enter an area of a erupting volcano. You must leave here by any means possible.',
+      action: (player, game) => {
+        const previousPlayer = player.id === 0 ? game.props.players.length -1 : player.id -1;
+        player.onVolcano = true;
+        game.setState({activePlayer: previousPlayer});
       }
     }
   }
@@ -101,7 +110,7 @@ class Game extends React.Component {
     const players = this.props.players;
     const board = [];
     for (let y = 0; y < rows; y++) {      
-      for (let x = 0; x < columns; x++) {
+      for (let x = 0; x < columns; x++) {        
         board.push({objs: [], paths: [], id: board.length + 1});
       }
     }
@@ -110,6 +119,8 @@ class Game extends React.Component {
       const tree = Math.random() > 0.3 ? '🌴': '🌵';
       board[x].objs.push({type: 'tree', obj: {permanent: true, emoji: tree}});
     }
+    const volcanoLocation = this.findFreePlace(board, () => Math.max(20, Math.floor(Math.random() * columns * rows)));
+    board[volcanoLocation].objs.push({type: 'volcano', obj: {permanent: true, emoji: '🌋'}});
     players.forEach((player) => {
       const x = this.findFreePlace(board, () => Math.floor(Math.random() * columns));
       board[x].objs.push({type: 'home', obj: player.home});
@@ -209,24 +220,22 @@ class Game extends React.Component {
     const board = this.state.board;
     const to = board.find((tile) => tile.id === tileId);
     const activePlayer = this.props.players[this.state.activePlayer];
+    activePlayer.onVolcano = false;
     const from = this.findPlayerSlot(activePlayer);
     from.objs = from.objs.filter(obj => !obj.obj || obj.obj.name !== activePlayer.name);
     const encounterables = to.objs.filter((obj) => encounterMap[obj.type] && (!encounterMap[obj.type]().hasAnyEffect || encounterMap[obj.type]().hasAnyEffect(activePlayer, obj.obj)));
     to.objs.push({type: 'player', obj: activePlayer});
     to.objs = to.objs.filter((obj) => obj.type === 'player' || (obj.obj && obj.obj.permanent));
-    encounterables.forEach((obj) => {
-      if (encounterMap[obj.type]) {
-        const encounter = encounterMap[obj.type]();
-        encounter.action(activePlayer, this);
-        encounter.continue = () => {
-          this.setState({encounter: null});
-          this.changeTurn(board)
-        };
-        this.setState({encounter});
-      }
-    });
     if (encounterables.length <= 0) {
       this.changeTurn(board);
+    } else {
+      const encounter = encounterMap[encounterables[0].type]();
+      encounter.action(activePlayer, this);
+      encounter.continue = () => {
+        this.setState({encounter: null});
+        this.changeTurn(board)
+      };
+      this.setState({encounter});
     }
   }
 
