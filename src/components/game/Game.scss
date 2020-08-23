@@ -8,6 +8,10 @@
     "info info"
     "board actions";
 
+  @media (orientation: portrait) {
+    grid-template-columns: 80vh 10vh;
+  }  
+
   .info-area {
     display: block;
     width: 100vw;
@@ -16,6 +20,10 @@
     border-bottom: 2px solid black;
     grid-area: info;
     max-height: 9vh;
+    @media (orientation: portrait) {
+      max-height: 9vw;
+      width: 100vh;
+    }  
     @media only screen and (max-width: $tablet) {
       padding: 0.3rem;
     }
@@ -23,11 +31,17 @@
 
   .board-area {
     grid-area: board;
-    max-height: 90vh;    
+    max-height: 80vh;
+    @media (orientation: portrait) {
+      max-height: 80vw;
+    }  
   }
 
   .action-area {
-    max-height: 90vh;
+    max-height: 80vh;
     grid-area: actions;
+    @media (orientation: portrait) {
+      max-height: 80vw;
+    }  
   }
 }

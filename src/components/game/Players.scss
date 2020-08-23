@@ -7,6 +7,9 @@ $player-colors: (blue, red, yellow, white, black, tan, cyan, lightgray);
   width: 98vw;
   flex-flow: row;
   justify-content: space-evenly;
+  @media (orientation: portrait) {
+    width: 98vh;
+  }  
 
   .player {  
     font-size: larger;
