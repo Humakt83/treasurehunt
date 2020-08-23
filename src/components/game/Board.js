@@ -25,7 +25,7 @@ export default class Board extends React.Component {
             } else if (obj.obj && obj.obj.permanent) {
               return <span role="img" aria-label="something to pick" key={key}>{obj.obj.emoji}</span>;
             } else {            
-              return <span className="secret" role="img" aria-label="something to pick" key={key}>❓</span>;
+              return <span className="secret" role="img" aria-label="something to pick" key={key}>?</span>;
             }
           })}
         </div>);

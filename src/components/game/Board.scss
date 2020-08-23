@@ -2,7 +2,6 @@
 @import './Players.scss';
 
 .level {
-  background: blue;
   padding: 6px 5px;
   color: white;
   font-weight: bolder;
@@ -20,7 +19,7 @@
 .tile {
   width: 80%;
   height: 90%;
-  background: green;
+  background: #44CC44;
   vertical-align: middle;
   line-height: 8vh;
   
@@ -29,7 +28,7 @@
   border-radius: 90px;
   text-align: center;
   z-index: 1;
-  box-shadow: inset 0 0 0 5px sandybrown;
+  box-shadow: inset 0 0 0 5px #FFDD00;
   &--movable {
     box-shadow: inset 0 0 15px 25px gold;
     cursor: pointer;
@@ -53,13 +52,13 @@
 
 .north,
 .south {
-  width: 1rem;
-  left: 30%;
+  width: 0.4rem;
+  left: 35%;
   height: 25%;
-  border-right: 5px ridge brown;
-  border-left: 5px ridge brown;
-  @media only screen and (max-width: 800px) {
-    width: 0.5rem;
+  border-right: 3px ridge brown;
+  border-left: 3px ridge brown;
+  @media only screen and (max-width: $mobile) {
+    width: 0.3rem;
   }
 }
 
@@ -74,21 +73,30 @@
 .west,
 .east {
   width: 25%;
-  top: 30%;
-  height: 1rem;
-  border-top: 5px ridge brown;
-  border-bottom: 5px ridge brown;
+  top: 35%;
+  height: 0.4rem;
+  border-top: 3px ridge brown;
+  border-bottom: 3px ridge brown;
+  @media only screen and (max-width: $tablet) {
+    width: 28%
+  }
   @media only screen and (max-width: $mobile) {
-    height: 0.4rem;
+    height: 0.2rem;
   }
 }
 
 .west {  
   left: -15%;
+  @media only screen and (max-width: $tablet) {
+    left: -16%
+  }
 }
 
 .east {
   right: -15%;
+  @media only screen and (max-width: $tablet) {
+    right: -16%
+  }
 }
 
 .home,
@@ -101,20 +109,5 @@
 }
 
 .secret {
-  &::after,
-  &::before {
-    content: "🔀🔀🔀";
-    font-size: 18px;
-    position: absolute;
-    z-index: -1;
-    @media only screen and (max-width: $tablet) {
-      content: '';
-    }
-  }
-  &::before {
-    transform: rotate(90deg) translateY(20px);
-  }
-  &::after {    
-    transform: rotate(270deg) translateY(-35px);
-  }
+  color: black;
 }
