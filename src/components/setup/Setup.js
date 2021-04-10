@@ -50,10 +50,14 @@ export default class Setup extends React.Component {
         case 'PLAYERS': {
           let players = event.data.content.map((name, index) => createPlayer(name, index));
           this.setState({players, gameStarted: true});
+          break;
         }
         case 'GAMEDATA': {
           this.setState({gameData: event.data.content});
+          break;
         }
+        default: 
+          break;
       }
     };
     
