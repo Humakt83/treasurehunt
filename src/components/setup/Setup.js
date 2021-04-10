@@ -31,6 +31,13 @@ export default class Setup extends React.Component {
     }
   }
 
+  getKey() {
+    if (window.location.href.indexOf('gameId=') >= 0) {
+      return window.location.href.split('gameId=')[1].split('&')[0];
+    }
+    return '';
+  }
+
   createAndOpenSocket() {
     let uri = "ws://" + process.env.REACT_APP_SERVER_HOST;
     uri = uri.substring(0, uri.lastIndexOf('/'));
@@ -42,17 +49,22 @@ export default class Setup extends React.Component {
     
     socket.onopen = (event) => {
       console.log(`opened, Connected to ${event.currentTarget.url}`);
+      socket.send(JSON.stringify({
+        msgType: 'gameplayers',
+        key: this.getKey()
+      }));
     };
     
     socket.onmessage = function(event) {
       console.log(`received <<<  ${event.data}`);
-      switch (event.data.type) {
-        case 'PLAYERS': {
+      const data = JSON.parse(event.data);
+      switch (data.msgType) {
+        case 'gameplayers': {
           let players = event.data.content.map((name, index) => createPlayer(name, index));
           this.setState({players, gameStarted: true});
           break;
         }
-        case 'GAMEDATA': {
+        case 'gamedata': {
           this.setState({gameData: event.data.content});
           break;
         }
@@ -68,7 +80,11 @@ export default class Setup extends React.Component {
   }
 
   send = (data) => {
-    socket.send(JSON.stringify(data));
+    socket.send(JSON.stringify({
+      msgType: 'gamedata',
+      content: data,
+      key: this.getKey()
+    }));
   }
 
   addPlayer() {
