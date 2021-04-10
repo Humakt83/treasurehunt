@@ -32,7 +32,7 @@ export default class Setup extends React.Component {
   }
 
   createAndOpenSocket() {
-    let uri = "ws://" + window.location.host + window.location.pathname;
+    let uri = "ws://" + process.env.REACT_APP_SERVER_HOST;
     uri = uri.substring(0, uri.lastIndexOf('/'));
     socket = new WebSocket(uri);
 
