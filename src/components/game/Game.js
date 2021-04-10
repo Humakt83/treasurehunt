@@ -84,7 +84,7 @@ class Game extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = {board: this.constructBoard(), activePlayer: 0, tilesToMove: []};
+    this.state = {board: this.constructBoard(props.players), activePlayer: 0, tilesToMove: [], players: props.players};
     this.move = this.move.bind(this);
     this.skip = this.skip.bind(this);
     this.roll = this.roll.bind(this);
@@ -106,8 +106,14 @@ class Game extends React.Component {
     }
   }
 
-  constructBoard() {
-    const players = this.props.players;
+  componentDidUpdate(prevProps) {
+    if (this.props.gameData && (!prevProps.gameData || prevProps.gameData.activePlayer !== this.props.gameData.activePlayer)) {
+      const waiting = this.state.players[this.props.activePlayer].name !== this.props.mePlayer;
+      this.setState({activePlayer: this.props.activePlayer, board: this.props.board, waiting, players: this.props.players});
+    }
+  }
+
+  constructBoard(players) {
     const board = [];
     for (let y = 0; y < rows; y++) {      
       for (let x = 0; x < columns; x++) {        
@@ -160,15 +166,38 @@ class Game extends React.Component {
   }
 
   changeTurn(board, modificationToTurnOrder = 0) {
-    if (this.props.players[this.state.activePlayer].winner) {
+    if (this.props.useSocket) {
+      this.changeTurnWebsocket(board, modificationToTurnOrder);
+    } else {
+      this.changeTurnHotseat(board, modificationToTurnOrder);
+    }
+  }
+
+  changeTurnHotseat(board, modificationToTurnOrder) {
+    if (this.state.players[this.state.activePlayer].winner) {
       this.setState({gameOver: true});
       return;
     }
     let activePlayer = this.state.activePlayer + 1 + modificationToTurnOrder;
-    if (activePlayer + 1 > this.props.players.length) {
+    if (activePlayer + 1 > this.state.players.length) {
       activePlayer = 0;
     }
     this.setState({activePlayer, board, tilesToMove: [], actionsDisabled: false});
+  }
+
+  changeTurnWebsocket(board, modificationToTurnOrder) {
+    if (this.state.players[this.state.activePlayer].winner) {
+      this.setState({gameOver: true});
+      this.state.send(this.state);
+      return;
+    }
+    let activePlayer = this.state.activePlayer + 1 + modificationToTurnOrder;
+    if (activePlayer + 1 > this.state.players.length) {
+      activePlayer = 0;
+    }
+    const waiting = this.state.players[activePlayer].name !== this.props.mePlayer;
+    this.setState({activePlayer, board, tilesToMove: [], actionsDisabled: false, waiting});
+    this.props.send({activePlayer, board});
   }
 
   findPlayerSlot(player) {
@@ -219,7 +248,7 @@ class Game extends React.Component {
     event.stopPropagation();    
     const board = this.state.board;
     const to = board.find((tile) => tile.id === tileId);
-    const activePlayer = this.props.players[this.state.activePlayer];
+    const activePlayer = this.state.players[this.state.activePlayer];
     activePlayer.onVolcano = false;
     const from = this.findPlayerSlot(activePlayer);
     from.objs = from.objs.filter(obj => !obj.obj || obj.obj.name !== activePlayer.name);
@@ -241,7 +270,7 @@ class Game extends React.Component {
 
   roll() {
     const rollAmount = 1 + Math.floor(Math.random() * 3);
-    const tilesToMove = this.moveableTiles(this.props.players[this.state.activePlayer], this.state.board, rollAmount);
+    const tilesToMove = this.moveableTiles(this.state.players[this.state.activePlayer], this.state.board, rollAmount);
     const oddOrEven = this.state.rollToggle ? false : true;
     if (tilesToMove.length > 0) {
       this.setState({actionsDisabled: true, rolled: rollAmount, tilesToMove, rollToggle: oddOrEven});
@@ -270,24 +299,24 @@ class Game extends React.Component {
   }
 
   helicopter() {
-    const player = this.props.players[this.state.activePlayer];
+    const player = this.state.players[this.state.activePlayer];
     player.money -= 1000;
     this.movableTilesToAnyDirection(player, 3);
   }
 
   ship() {
-    const player = this.props.players[this.state.activePlayer];
+    const player = this.state.players[this.state.activePlayer];
     player.money -= 300;
     this.movableTilesToAnyDirection(player, 1);
   }
 
   skip() {
-    this.props.players[this.state.activePlayer].money += 100;
+    this.state.players[this.state.activePlayer].money += 100;
     this.changeTurn(this.state.board);
   }
 
   buyFakeDocuments() {
-    const player = this.props.players[this.state.activePlayer];
+    const player = this.state.players[this.state.activePlayer];
     player.money -= 1000;
     player.fakeDocuments = true;
     this.changeTurn(this.state.board);
@@ -300,25 +329,30 @@ class Game extends React.Component {
     }
     let gameOver = ''
     if (this.state.gameOver) {
-      gameOver = <GameOverCurtain players={this.props.players}/>;
+      gameOver = <GameOverCurtain players={this.state.players}/>;
+    }
+    let waiting = '';
+    if (this.state.waiting) {
+      waiting = <div className="waitingCurtain"></div>;
     }
     return (
       <section>
         <div className="game">
           <div className="info-area">
-            <Players players={this.props.players} active={this.state.activePlayer} />
+            <Players players={this.state.players} active={this.state.activePlayer} />
           </div>
           <div className="board-area">
             <Board board={this.state.board} tilesToMove={this.state.tilesToMove} onMove={this.move}/>
           </div>
           <div className="action-area">
-            <ActionPanel disabled={this.state.actionsDisabled} player={this.props.players[this.state.activePlayer]}
+            <ActionPanel disabled={this.state.actionsDisabled} player={this.state.players[this.state.activePlayer]}
               actions={{skip: this.skip, roll: this.roll, helicopter: this.helicopter, ship: this.ship, buyFakeDocuments: this.buyFakeDocuments}}
               roll={this.state.rolled} rollToggle={this.state.rollToggle}/>
           </div>
         </div>
         {gameOver}
         {encounter}
+        {waiting}
       </section>
     )
   }
